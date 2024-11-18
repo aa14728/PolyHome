@@ -7,9 +7,11 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import kotlinx.coroutines.MainScope
 
 
 class LoginActivity : AppCompatActivity() {
+    private val mainScope = MainScope()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -49,7 +51,7 @@ class LoginActivity : AppCompatActivity() {
                     intent.putExtra("logtoken", loginResponse.token);
                     startActivity(intent);
                 }
-                else if(responseCode == 404)
+                else if(responseCode == 404 && loginResponse == null)
                     Toast.makeText(this, "Aucun utilisateur ne correspond aux identifiants donnés" , Toast.LENGTH_SHORT).show();
                 else if(responseCode == 500)
                     Toast.makeText(this, " Une erreur s’est produite au niveau du serveur" , Toast.LENGTH_SHORT).show();

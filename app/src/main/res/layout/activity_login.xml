@@ -14,7 +14,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/foreground"/>
 
     <LinearLayout
         android:id="@+id/linearLayout2"
@@ -71,8 +72,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:backgroundTint="#01053d"
             android:onClick="login"
-            android:text="Connexion" />
+            android:text="Connexion"
+            android:textColor="@color/white" />
 
         <TextView
             android:id="@+id/textView2"
@@ -88,7 +91,9 @@
             android:id="@+id/btnGoToRegister"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Créer un compte" />
+            android:backgroundTint="#01053d"
+            android:text="Créer un compte"
+            android:textColor="@color/white" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
