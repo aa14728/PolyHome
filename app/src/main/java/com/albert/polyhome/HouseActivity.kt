@@ -27,7 +27,7 @@ class HouseActivity : AppCompatActivity() {
 
         loadHouses()
         housesAdapter = ArrayAdapter<HouseData>(this, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, houses)
-        initDevicesListView()
+        //initDevicesListView()
 //        initializeSpinners()
     }
 
@@ -50,15 +50,18 @@ class HouseActivity : AppCompatActivity() {
     }
 
     private fun houseSuccess(responseCode: Int, loadedHouses: List<HouseData>?) {
-        if(responseCode == 200 && loadedHouses != null){
+        if (responseCode == 200 && loadedHouses != null) {
             val txtTitle = findViewById<TextView>(R.id.houseId)
             for(house in loadedHouses)
                 houses.add(house)
-            txtTitle.text = "PolyHome Chalet " + houses.first().houseId.toString();
-            loadDevices(houses.first().houseId);
-        }
 
+            runOnUiThread {
+                txtTitle.text = "PolyHome Chalet " + houses.first().houseId.toString()
+            }
+            loadDevices(houses.first().houseId)
+        }
     }
+
 
     public fun loadDevices(houseId: Int) {
         try {
@@ -80,9 +83,16 @@ class HouseActivity : AppCompatActivity() {
             for(device in loadedDevices)
                 devices.add(device)
         }
+        runOnUiThread{
+            initDevicesListView();
+            updateListDevices();
+        }
 
     }
 
+    private fun updateListDevices() {
+        DeviceAdapter(this, devices).notifyDataSetChanged();
+    }
     private fun initDevicesListView(){
         val listView = findViewById<ListView>(R.id.listViewDevice);
         listView.adapter = DeviceAdapter(this, devices);
