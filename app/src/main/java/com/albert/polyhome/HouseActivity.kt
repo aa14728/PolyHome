@@ -11,29 +11,35 @@ import android.widget.ListView
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 
 class HouseActivity : AppCompatActivity() {
 
     private var houses: ArrayList<HouseData> = ArrayList();
-    private lateinit var housesAdapter: ArrayAdapter<HouseData>
+//    private lateinit var housesAdapter: ArrayAdapter<HouseData>
 
     private var devices: ArrayList<DeviceData> = ArrayList();
+    private lateinit var deviceAdapter: DeviceAdapter;
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
+        deviceAdapter = DeviceAdapter(this, devices);
+
         loadHouses()
-        housesAdapter = ArrayAdapter<HouseData>(this, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, houses)
+//        housesAdapter = ArrayAdapter<HouseData>(this, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, houses)
         //initDevicesListView()
 //        initializeSpinners()
     }
 
-    public fun goBackToLogin(view: View){
-        finish()
-    }
+//    public fun goBackToLogin(view: View){
+//        finish()
+//    }
+
+    public
 
     public fun loadHouses() {
         try {
@@ -66,9 +72,8 @@ class HouseActivity : AppCompatActivity() {
     public fun loadDevices(houseId: Int) {
         try {
             val tokenValue = intent.getStringExtra("logtoken");
-//            val houseId = houses.first().houseId;
-            Api().get<List<DeviceData>>(
-                " https://polyhome.lesmoulinsdudev.com/api/houses/$houseId/devices",
+            Api().get<DeviceList>(
+                "https://polyhome.lesmoulinsdudev.com/api/houses/$houseId/devices",
                 ::deviceSuccess,
                 tokenValue
             )
@@ -78,29 +83,54 @@ class HouseActivity : AppCompatActivity() {
 
     }
 
-    private fun deviceSuccess(responseCode: Int, loadedDevices: List<DeviceData>?) {
-        if(responseCode == 200 && loadedDevices != null){
-            for(device in loadedDevices)
-                devices.add(device)
+    private fun deviceSuccess(responseCode: Int, loadedDevices: DeviceList?) {
+        runOnUiThread {
+            if(responseCode == 200 && loadedDevices != null){
+                Toast.makeText(this, responseCode.toString(), Toast.LENGTH_SHORT).show();
+                for(device in loadedDevices.devices!!)
+                    devices.add(device)
+            }
+            else if(responseCode == 403)
+                Toast.makeText(this, "Accès interdit (token invalide ou ne correspondant pas au\n" +
+                        " propriétaire de la maison ou à un tiers ayant accès)" , Toast.LENGTH_SHORT).show();
+            else if(responseCode == 500)
+                Toast.makeText(this, " Une erreur s’est produite au niveau du serveur" , Toast.LENGTH_SHORT).show();
         }
+
         runOnUiThread{
             initDevicesListView();
+            initializeSpinners()
             updateListDevices();
         }
 
     }
+
 
     private fun updateListDevices() {
         DeviceAdapter(this, devices).notifyDataSetChanged();
     }
     private fun initDevicesListView(){
         val listView = findViewById<ListView>(R.id.listViewDevice);
-        listView.adapter = DeviceAdapter(this, devices);
+
+        listView.setOnItemClickListener { parent, view, position, id ->
+            val selectedDevice = devices[position];
+            performActionOnDevice(selectedDevice);
+
+        }
+
+        listView.adapter = deviceAdapter;
     }
 
+    private fun performActionOnDevice(device: DeviceData) {
+        // Exemple d'action : ouvrir une nouvelle activité ou exécuter une commande API
+        Toast.makeText(this, "Action sur l'appareil ${device.id}", Toast.LENGTH_SHORT).show()
 
-//    private fun initializeSpinners(){
-//        val lstSpinHouse = findViewById<Spinner>(R.id.spinHouse)
-//        lstSpinHouse.adapter = housesAdapter;
-//    }
+        if()
+    }
+
+    private fun initializeSpinners(){
+        val lstSpinHouse = findViewById<Spinner>(R.id.spinHouse)
+
+        lstSpinHouse.adapter = deviceAdapter;
+    }
 }

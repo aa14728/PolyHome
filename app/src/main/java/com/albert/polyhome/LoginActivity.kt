@@ -51,8 +51,9 @@ class LoginActivity : AppCompatActivity() {
                     val intent = Intent(this, HouseActivity::class.java);
                     intent.putExtra("logtoken", loginResponse.token);
                     startActivity(intent);
+                    finish();
                 }
-                else if(responseCode == 404 && loginResponse == null)
+                else if(responseCode == 404)
                     Toast.makeText(this, "Aucun utilisateur ne correspond aux identifiants donnés" , Toast.LENGTH_SHORT).show();
                 else if(responseCode == 500)
                     Toast.makeText(this, " Une erreur s’est produite au niveau du serveur" , Toast.LENGTH_SHORT).show();

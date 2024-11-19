@@ -54,6 +54,7 @@ class Api {
             else
             {
                 println(responseCode);
+                onSuccess(responseCode, null);
             }
         }
     }
