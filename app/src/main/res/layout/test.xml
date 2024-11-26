@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ConstraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -29,39 +30,44 @@
         app:layout_constraintTop_toBottomOf="@+id/textView7">
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/btnShutterFilter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:backgroundTint="#01053d"
+            android:onClick="onClickShutterFilter"
             android:text="Shutter"
             android:textColor="@color/white" />
 
         <Button
-            android:id="@+id/button3"
+            android:id="@+id/btnGarageFilter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:backgroundTint="#01053d"
+            android:onClick="onClickGarageFilter"
             android:text="Garage"
             android:textColor="@color/white" />
 
         <Button
-            android:id="@+id/button4"
+            android:id="@+id/btnLightFilter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:backgroundTint="#01053d"
+            android:onClick="onClickLightFilter"
             android:text="Light"
             android:textColor="@color/white" />
     </LinearLayout>
 
     <ListView
+        android:id="@+id/listViewDevice"
         android:layout_width="match_parent"
-        android:layout_height="606dp"
+        android:layout_height="0dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="10dp"
+        android:layout_marginBottom="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

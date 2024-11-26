@@ -3,6 +3,7 @@ package com.albert.polyhome
 import android.bluetooth.BluetoothClass.Device
 import android.content.Intent
 import android.devicelock.DeviceId
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
@@ -13,6 +14,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.example.androidtp2.Api
 
 class HouseActivity : AppCompatActivity() {
 
@@ -25,9 +27,9 @@ class HouseActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_home)
+        setContentView(R.layout.test)
 
-        deviceAdapter = DeviceAdapter(this, devices);
+        //deviceAdapter = DeviceAdapter(this, devices);
 
         loadHouses()
 //        housesAdapter = ArrayAdapter<HouseData>(this, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, houses)
@@ -39,7 +41,102 @@ class HouseActivity : AppCompatActivity() {
 //        finish()
 //    }
 
-    public
+    public fun onClickShutterFilter(view: View){
+
+        val lstShutters:  ArrayList<DeviceData> = ArrayList();
+
+
+        val btnGarages = findViewById<Button>(R.id.btnGarageFilter);
+        val btnLights = findViewById<Button>(R.id.btnLightFilter);
+        val btnShutter = findViewById<Button>(R.id.btnShutterFilter);
+
+        btnGarages.setTextColor(Color.parseColor("#ffffff"))
+        btnGarages.setBackgroundColor(Color.parseColor("#01053d"))
+
+        btnLights.setTextColor(Color.parseColor("#ffffff"))
+        btnLights.setBackgroundColor(Color.parseColor("#01053d"))
+
+        btnShutter.setTextColor(Color.parseColor("#01053d"))
+        btnShutter.setBackgroundColor(Color.parseColor("#ffffff"))
+
+        for(device in devices){
+            if(device.id.startsWith("S")){
+                lstShutters.add(device);
+            }
+        }
+
+        runOnUiThread{
+            updateListDevices();
+            initDevicesListView(lstShutters);
+            updateListDevices();
+        }
+
+    }
+
+    public fun onClickGarageFilter(view: View){
+
+        val lstGarages:  ArrayList<DeviceData> = ArrayList();
+
+
+        val btnLights = findViewById<Button>(R.id.btnLightFilter);
+        val btnShutter = findViewById<Button>(R.id.btnShutterFilter);
+        val btnGarages = findViewById<Button>(R.id.btnGarageFilter);
+
+        btnLights.setTextColor(Color.parseColor("#ffffff"))
+        btnLights.setBackgroundColor(Color.parseColor("#01053d"))
+
+        btnShutter.setTextColor(Color.parseColor("#ffffff"))
+        btnShutter.setBackgroundColor(Color.parseColor("#01053d"))
+
+        btnGarages.setTextColor(Color.parseColor("#01053d"))
+        btnGarages.setBackgroundColor(Color.parseColor("#ffffff"))
+
+        for(device in devices){
+            if(device.id.startsWith("G")){
+                lstGarages.add(device);
+            }
+        }
+
+        runOnUiThread{
+            updateListDevices();
+            initDevicesListView(lstGarages);
+            updateListDevices();
+        }
+
+    }
+
+    public fun onClickLightFilter(view: View){
+
+        val lstLights:  ArrayList<DeviceData> = ArrayList();
+
+
+        val btnShutter = findViewById<Button>(R.id.btnShutterFilter);
+        val btnGarages = findViewById<Button>(R.id.btnGarageFilter);
+        val btnLights = findViewById<Button>(R.id.btnLightFilter);
+
+
+        btnGarages.setTextColor(Color.parseColor("#ffffff"))
+        btnGarages.setBackgroundColor(Color.parseColor("#01053d"))
+
+        btnShutter.setTextColor(Color.parseColor("#ffffff"))
+        btnShutter.setBackgroundColor(Color.parseColor("#01053d"))
+
+        btnLights.setTextColor(Color.parseColor("#01053d"))
+        btnLights.setBackgroundColor(Color.parseColor("#ffffff"))
+
+        for(device in devices){
+            if(device.id.startsWith("L")){
+                lstLights.add(device);
+            }
+        }
+
+        runOnUiThread{
+            clearListView();
+            initDevicesListView(lstLights);
+            updateListDevices();
+        }
+
+    }
 
     public fun loadHouses() {
         try {
@@ -61,9 +158,9 @@ class HouseActivity : AppCompatActivity() {
             for(house in loadedHouses)
                 houses.add(house)
 
-            runOnUiThread {
-                txtTitle.text = "PolyHome Chalet " + houses.first().houseId.toString()
-            }
+//            runOnUiThread {
+//                txtTitle.text = "PolyHome Chalet " + houses.first().houseId.toString()
+//            }
             loadDevices(houses.first().houseId)
         }
     }
@@ -97,11 +194,11 @@ class HouseActivity : AppCompatActivity() {
                 Toast.makeText(this, " Une erreur s’est produite au niveau du serveur" , Toast.LENGTH_SHORT).show();
         }
 
-        runOnUiThread{
-            initDevicesListView();
-            initializeSpinners()
-            updateListDevices();
-        }
+//        runOnUiThread{
+//            initDevicesListView();
+//            initializeSpinners()
+//            updateListDevices();
+//        }
 
     }
 
@@ -109,28 +206,37 @@ class HouseActivity : AppCompatActivity() {
     private fun updateListDevices() {
         DeviceAdapter(this, devices).notifyDataSetChanged();
     }
-    private fun initDevicesListView(){
+    private fun initDevicesListView(lstDevices: ArrayList<DeviceData>){
         val listView = findViewById<ListView>(R.id.listViewDevice);
 
-        listView.setOnItemClickListener { parent, view, position, id ->
-            val selectedDevice = devices[position];
-            performActionOnDevice(selectedDevice);
+//        listView.setOnItemClickListener { parent, view, position, id ->
+//            val selectedDevice = devices[position];
+//            performActionOnDevice(selectedDevice);
+//
+//        }
 
-        }
-
-        listView.adapter = deviceAdapter;
+        listView.adapter = DeviceAdapter(this, lstDevices);
     }
 
     private fun performActionOnDevice(device: DeviceData) {
         // Exemple d'action : ouvrir une nouvelle activité ou exécuter une commande API
         Toast.makeText(this, "Action sur l'appareil ${device.id}", Toast.LENGTH_SHORT).show()
 
-        if()
+
     }
 
-    private fun initializeSpinners(){
-        val lstSpinHouse = findViewById<Spinner>(R.id.spinHouse)
-
-        lstSpinHouse.adapter = deviceAdapter;
+    private fun clearListView() {
+        runOnUiThread {
+            val listView = findViewById<ListView>(R.id.listViewDevice)
+            val emptyList = ArrayList<DeviceData>() // Crée une liste vide
+            listView.adapter = DeviceAdapter(this, emptyList) // Associe l'adaptateur à la liste vide
+            Toast.makeText(this, "Liste vidée", Toast.LENGTH_SHORT).show()
+        }
     }
+
+//    private fun initializeSpinners(){
+//        val lstSpinHouse = findViewById<Spinner>(R.id.spinHouse)
+//
+//        lstSpinHouse.adapter = DeviceAdapter(this, devices);
+//    }
 }
