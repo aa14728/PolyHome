@@ -21,6 +21,9 @@
             android:name=".HouseActivity"
             android:exported="false" />
         <activity
+            android:name=".Test"
+            android:exported="false" />
+        <activity
             android:name=".LoginActivity"
             android:exported="true">
             <intent-filter>

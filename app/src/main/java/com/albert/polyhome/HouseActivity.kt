@@ -1,18 +1,12 @@
 package com.albert.polyhome
 
-import android.bluetooth.BluetoothClass.Device
-import android.content.Intent
-import android.devicelock.DeviceId
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
-import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ListView
-import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.androidtp2.Api
 
@@ -227,7 +221,7 @@ class HouseActivity : AppCompatActivity() {
 
     private fun clearListView() {
         runOnUiThread {
-            val listView = findViewById<ListView>(R.id.listViewDevice)
+            val listView = findViewById<ListView>(R.id.listViewHouse)
             val emptyList = ArrayList<DeviceData>() // Crée une liste vide
             listView.adapter = DeviceAdapter(this, emptyList) // Associe l'adaptateur à la liste vide
             Toast.makeText(this, "Liste vidée", Toast.LENGTH_SHORT).show()
