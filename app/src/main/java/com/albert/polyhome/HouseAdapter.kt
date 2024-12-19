@@ -38,7 +38,7 @@ class HouseAdapter(
 
         val house = getItem(position) as HouseData;
 
-        txtHouseID.text = house.houseId.toString();
+        txtHouseID.text = "Chalet " + house.houseId.toString();
 
         return view;
     }

@@ -38,8 +38,8 @@ class LoginActivity : AppCompatActivity() {
         val txtValueConnexionLogin = findViewById<TextView>(R.id.txtLogin)
         val txtValueConnexionPassword = findViewById<TextView>(R.id.txtPassword)
 
-        //val loginData = LoginData(txtValueConnexionLogin.text.toString(), txtValueConnexionPassword.text.toString())
-        val loginData = LoginData("ioplkm", "123")
+        val loginData = LoginData(txtValueConnexionLogin.text.toString(), txtValueConnexionPassword.text.toString())
+//        val loginData = LoginData("ioplkm", "123")
 
         Api().post<LoginData, LoginResponse>("https://polyhome.lesmoulinsdudev.com/api/users/auth", loginData, ::loginSuccess)
     }

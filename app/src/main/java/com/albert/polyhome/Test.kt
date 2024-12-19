@@ -1,5 +1,6 @@
 package com.albert.polyhome
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.ListView
 import android.widget.TextView
@@ -51,15 +52,26 @@ class Test : AppCompatActivity() {
         }
     }
 
+    public fun performActionOnDevice(house: HouseData){
+        val dataValue = intent.getStringExtra("logtoken");
+        val intent = Intent(this, HouseActivity::class.java)
+        // Ajouter l'ID de la maison comme extra
+        intent.putExtra("selectedHouseId", house.houseId.toString());
+        intent.putExtra("token", dataValue)
+
+        // Lancer l'activité
+        startActivity(intent)
+    }
+
     private fun initHousesListView(lstHouses: ArrayList<HouseData>){
         val listView = findViewById<ListView>(R.id.listViewHouse);
 
-//        listView.setOnItemClickListener { parent, view, position, id ->
-//            val selectedDevice = devices[position];
-//            performActionOnDevice(selectedDevice);
-//
-//        }
-
         listView.adapter = HouseAdapter(this, lstHouses);
+
+        listView.setOnItemClickListener { parent, view, position, id ->
+            val selectedHouse = listView.adapter.getItem(position) as HouseData;
+            performActionOnDevice(selectedHouse);
+
+        }
     }
 }

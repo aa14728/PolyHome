@@ -23,11 +23,16 @@ class HouseActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.test)
 
+        loadDevices();
+
         //deviceAdapter = DeviceAdapter(this, devices);
 
-        loadHouses()
+//        val txtTitle = findViewById<TextView>(R.id.mainTitle)
+//        runOnUiThread {
+//            txtTitle.text = intent.getStringExtra("house_id").toString();
+//        }
 //        housesAdapter = ArrayAdapter<HouseData>(this, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, houses)
-        //initDevicesListView()
+//        initDevicesListView()
 //        initializeSpinners()
     }
 
@@ -60,7 +65,7 @@ class HouseActivity : AppCompatActivity() {
         }
 
         runOnUiThread{
-            updateListDevices();
+            clearListView();
             initDevicesListView(lstShutters);
             updateListDevices();
         }
@@ -92,7 +97,7 @@ class HouseActivity : AppCompatActivity() {
         }
 
         runOnUiThread{
-            updateListDevices();
+            clearListView();
             initDevicesListView(lstGarages);
             updateListDevices();
         }
@@ -132,37 +137,10 @@ class HouseActivity : AppCompatActivity() {
 
     }
 
-    public fun loadHouses() {
+    public fun loadDevices() {
         try {
-            val tokenValue = intent.getStringExtra("logtoken");
-            Api().get<List<HouseData>>(
-                " https://polyhome.lesmoulinsdudev.com/api/houses",
-                ::houseSuccess,
-                tokenValue
-            )
-        }catch (e: Exception){
-            Toast.makeText(this, e.message , Toast.LENGTH_SHORT).show();
-        }
-
-    }
-
-    private fun houseSuccess(responseCode: Int, loadedHouses: List<HouseData>?) {
-        if (responseCode == 200 && loadedHouses != null) {
-            val txtTitle = findViewById<TextView>(R.id.houseId)
-            for(house in loadedHouses)
-                houses.add(house)
-
-//            runOnUiThread {
-//                txtTitle.text = "PolyHome Chalet " + houses.first().houseId.toString()
-//            }
-            loadDevices(houses.first().houseId)
-        }
-    }
-
-
-    public fun loadDevices(houseId: Int) {
-        try {
-            val tokenValue = intent.getStringExtra("logtoken");
+            val tokenValue = intent.getStringExtra("token");
+            val houseId = intent.getStringExtra("selectedHouseId");
             Api().get<DeviceList>(
                 "https://polyhome.lesmoulinsdudev.com/api/houses/$houseId/devices",
                 ::deviceSuccess,
@@ -221,7 +199,7 @@ class HouseActivity : AppCompatActivity() {
 
     private fun clearListView() {
         runOnUiThread {
-            val listView = findViewById<ListView>(R.id.listViewHouse)
+            val listView = findViewById<ListView>(R.id.listViewDevice)
             val emptyList = ArrayList<DeviceData>() // Crée une liste vide
             listView.adapter = DeviceAdapter(this, emptyList) // Associe l'adaptateur à la liste vide
             Toast.makeText(this, "Liste vidée", Toast.LENGTH_SHORT).show()
