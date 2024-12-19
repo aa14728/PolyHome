@@ -1,214 +1,164 @@
 package com.albert.polyhome
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
 import com.example.androidtp2.Api
 
 class HouseActivity : AppCompatActivity() {
 
-    private var houses: ArrayList<HouseData> = ArrayList();
-//    private lateinit var housesAdapter: ArrayAdapter<HouseData>
-
-    private var devices: ArrayList<DeviceData> = ArrayList();
-    private lateinit var deviceAdapter: DeviceAdapter;
-
+    private var devices: ArrayList<DeviceData> = ArrayList()
+    private var currentFilter: String = ""  // Variable pour garder le filtre actuel
+    private val handler = Handler(Looper.getMainLooper()) // Handler pour exécuter les actions périodiquement
+    private val updateInterval = 30000L // Intervalle de 30 secondes pour récupérer les appareils
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.test)
 
-        loadDevices();
+        // Charger les appareils au démarrage
+        loadDevices()
 
-        //deviceAdapter = DeviceAdapter(this, devices);
-
-//        val txtTitle = findViewById<TextView>(R.id.mainTitle)
-//        runOnUiThread {
-//            txtTitle.text = intent.getStringExtra("house_id").toString();
-//        }
-//        housesAdapter = ArrayAdapter<HouseData>(this, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, houses)
-//        initDevicesListView()
-//        initializeSpinners()
+        // Démarrer la mise à jour périodique
+        startDeviceUpdates()
     }
 
-//    public fun goBackToLogin(view: View){
-//        finish()
-//    }
-
-    public fun onClickShutterFilter(view: View){
-
-        val lstShutters:  ArrayList<DeviceData> = ArrayList();
-
-
-        val btnGarages = findViewById<Button>(R.id.btnGarageFilter);
-        val btnLights = findViewById<Button>(R.id.btnLightFilter);
-        val btnShutter = findViewById<Button>(R.id.btnShutterFilter);
-
-        btnGarages.setTextColor(Color.parseColor("#ffffff"))
-        btnGarages.setBackgroundColor(Color.parseColor("#01053d"))
-
-        btnLights.setTextColor(Color.parseColor("#ffffff"))
-        btnLights.setBackgroundColor(Color.parseColor("#01053d"))
-
-        btnShutter.setTextColor(Color.parseColor("#01053d"))
-        btnShutter.setBackgroundColor(Color.parseColor("#ffffff"))
-
-        for(device in devices){
-            if(device.id.startsWith("S")){
-                lstShutters.add(device);
-            }
-        }
-
-        runOnUiThread{
-            clearListView();
-            initDevicesListView(lstShutters);
-            updateListDevices();
-        }
-
-    }
-
-    public fun onClickGarageFilter(view: View){
-
-        val lstGarages:  ArrayList<DeviceData> = ArrayList();
-
-
-        val btnLights = findViewById<Button>(R.id.btnLightFilter);
-        val btnShutter = findViewById<Button>(R.id.btnShutterFilter);
-        val btnGarages = findViewById<Button>(R.id.btnGarageFilter);
-
-        btnLights.setTextColor(Color.parseColor("#ffffff"))
-        btnLights.setBackgroundColor(Color.parseColor("#01053d"))
-
-        btnShutter.setTextColor(Color.parseColor("#ffffff"))
-        btnShutter.setBackgroundColor(Color.parseColor("#01053d"))
-
-        btnGarages.setTextColor(Color.parseColor("#01053d"))
-        btnGarages.setBackgroundColor(Color.parseColor("#ffffff"))
-
-        for(device in devices){
-            if(device.id.startsWith("G")){
-                lstGarages.add(device);
-            }
-        }
-
-        runOnUiThread{
-            clearListView();
-            initDevicesListView(lstGarages);
-            updateListDevices();
-        }
-
-    }
-
-    public fun onClickLightFilter(view: View){
-
-        val lstLights:  ArrayList<DeviceData> = ArrayList();
-
-
-        val btnShutter = findViewById<Button>(R.id.btnShutterFilter);
-        val btnGarages = findViewById<Button>(R.id.btnGarageFilter);
-        val btnLights = findViewById<Button>(R.id.btnLightFilter);
-
-
-        btnGarages.setTextColor(Color.parseColor("#ffffff"))
-        btnGarages.setBackgroundColor(Color.parseColor("#01053d"))
-
-        btnShutter.setTextColor(Color.parseColor("#ffffff"))
-        btnShutter.setBackgroundColor(Color.parseColor("#01053d"))
-
-        btnLights.setTextColor(Color.parseColor("#01053d"))
-        btnLights.setBackgroundColor(Color.parseColor("#ffffff"))
-
-        for(device in devices){
-            if(device.id.startsWith("L")){
-                lstLights.add(device);
-            }
-        }
-
-        runOnUiThread{
-            clearListView();
-            initDevicesListView(lstLights);
-            updateListDevices();
-        }
-
-    }
-
-    public fun loadDevices() {
+    // Charger les appareils via l'API
+    private fun loadDevices() {
         try {
-            val tokenValue = intent.getStringExtra("token");
-            val houseId = intent.getStringExtra("selectedHouseId");
+            val tokenValue = intent.getStringExtra("token") ?: ""
+            val houseId = intent.getStringExtra("selectedHouseId") ?: ""
+
+            if (tokenValue.isBlank() || houseId.isBlank()) {
+                Toast.makeText(this, "Token ou ID de maison manquant.", Toast.LENGTH_SHORT).show()
+                return
+            }
+
             Api().get<DeviceList>(
                 "https://polyhome.lesmoulinsdudev.com/api/houses/$houseId/devices",
                 ::deviceSuccess,
                 tokenValue
             )
-        }catch (e: Exception){
-            Toast.makeText(this, e.message , Toast.LENGTH_SHORT).show();
+        } catch (e: Exception) {
+            Toast.makeText(this, "Erreur : ${e.message}", Toast.LENGTH_SHORT).show()
         }
-
     }
 
+    // Gestion de la réponse pour le chargement des appareils
     private fun deviceSuccess(responseCode: Int, loadedDevices: DeviceList?) {
         runOnUiThread {
-            if(responseCode == 200 && loadedDevices != null){
-                Toast.makeText(this, responseCode.toString(), Toast.LENGTH_SHORT).show();
-                for(device in loadedDevices.devices!!)
-                    devices.add(device)
+            when (responseCode) {
+                200 -> {
+                    if (loadedDevices != null) {
+                        devices.clear()
+                        devices.addAll(loadedDevices.devices!!)
+                        // Appliquer le filtre après avoir chargé les appareils
+                        filterDevicesByType(currentFilter)  // Appliquer le filtre actuel
+                    }
+                }
+                403 -> Toast.makeText(this, "Accès interdit.", Toast.LENGTH_SHORT).show()
+                500 -> Toast.makeText(this, "Erreur serveur.", Toast.LENGTH_SHORT).show()
+                else -> Toast.makeText(this, "Erreur inconnue : $responseCode", Toast.LENGTH_SHORT).show()
             }
-            else if(responseCode == 403)
-                Toast.makeText(this, "Accès interdit (token invalide ou ne correspondant pas au\n" +
-                        " propriétaire de la maison ou à un tiers ayant accès)" , Toast.LENGTH_SHORT).show();
-            else if(responseCode == 500)
-                Toast.makeText(this, " Une erreur s’est produite au niveau du serveur" , Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public fun sendCommandToDevice(action: String, deviceId: String) {
+        val tokenValue = intent.getStringExtra("token") ?: ""
+        val houseId = intent.getStringExtra("selectedHouseId") ?: ""
+
+        if (tokenValue.isBlank() || houseId.isBlank() || deviceId.isBlank()) {
+            Toast.makeText(this, "Données manquantes pour effectuer l'action.", Toast.LENGTH_SHORT).show()
+            return
         }
 
-//        runOnUiThread{
-//            initDevicesListView();
-//            initializeSpinners()
-//            updateListDevices();
-//        }
+        val commandData = CommandData(action)
 
+        Api().post<CommandData>("https://polyhome.lesmoulinsdudev.com/api/houses/$houseId/devices/$deviceId/command", commandData, ::sendCommandToDeviceSuccess, tokenValue)
     }
 
-
-    private fun updateListDevices() {
-        DeviceAdapter(this, devices).notifyDataSetChanged();
-    }
-    private fun initDevicesListView(lstDevices: ArrayList<DeviceData>){
-        val listView = findViewById<ListView>(R.id.listViewDevice);
-
-//        listView.setOnItemClickListener { parent, view, position, id ->
-//            val selectedDevice = devices[position];
-//            performActionOnDevice(selectedDevice);
-//
-//        }
-
-        listView.adapter = DeviceAdapter(this, lstDevices);
-    }
-
-    private fun performActionOnDevice(device: DeviceData) {
-        // Exemple d'action : ouvrir une nouvelle activité ou exécuter une commande API
-        Toast.makeText(this, "Action sur l'appareil ${device.id}", Toast.LENGTH_SHORT).show()
-
-
-    }
-
-    private fun clearListView() {
+    // Actualiser les appareils après l'envoi de la commande
+    public fun sendCommandToDeviceSuccess(responseCode: Int?) {
         runOnUiThread {
-            val listView = findViewById<ListView>(R.id.listViewDevice)
-            val emptyList = ArrayList<DeviceData>() // Crée une liste vide
-            listView.adapter = DeviceAdapter(this, emptyList) // Associe l'adaptateur à la liste vide
-            Toast.makeText(this, "Liste vidée", Toast.LENGTH_SHORT).show()
+            android.util.Log.d("DEBUG", "Response Code: $responseCode")
+
+            when (responseCode) {
+                200 -> {
+                    Toast.makeText(this, "Commande exécutée avec succès pour l'appareil", Toast.LENGTH_SHORT).show()
+                    // Rafraîchir la liste des appareils après une commande
+                    loadDevices()  // Recharger les appareils et appliquer immédiatement le filtre
+                }
+                400 -> Toast.makeText(this, "Erreur 400 : Requête invalide. Vérifiez les données envoyées.", Toast.LENGTH_SHORT).show()
+                403 -> Toast.makeText(this, "Accès interdit. Vérifiez votre token.", Toast.LENGTH_SHORT).show()
+                500 -> Toast.makeText(this, "Erreur serveur. Réessayez plus tard.", Toast.LENGTH_SHORT).show()
+                else -> Toast.makeText(this, "Erreur inconnue : $responseCode", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
-//    private fun initializeSpinners(){
-//        val lstSpinHouse = findViewById<Spinner>(R.id.spinHouse)
-//
-//        lstSpinHouse.adapter = DeviceAdapter(this, devices);
-//    }
+    // Initialiser la liste des appareils
+    private fun initDevicesListView(lstDevices: ArrayList<DeviceData>) {
+        val listView = findViewById<ListView>(R.id.listViewDevice)
+        listView.adapter = DeviceAdapter(this, lstDevices) { action, deviceId ->
+            sendCommandToDevice(action, deviceId)
+        }
+    }
+
+    // Méthode pour filtrer les appareils par type
+    private fun filterDevicesByType(type: String) {
+        // Conserver le filtre actuel pour pouvoir le réappliquer après mise à jour
+        currentFilter = type
+        val filteredDevices = devices.filter { it.id.startsWith(type) }
+        initDevicesListView(ArrayList(filteredDevices))
+    }
+
+    // Gestion des filtres
+    fun onClickShutterFilter(view: View) = updateFilterUI(view, "S")
+    fun onClickGarageFilter(view: View) = updateFilterUI(view, "G")
+    fun onClickLightFilter(view: View) = updateFilterUI(view, "L")
+
+    private fun updateFilterUI(view: View, type: String) {
+        val btnShutter = findViewById<Button>(R.id.btnShutterFilter)
+        val btnGarage = findViewById<Button>(R.id.btnGarageFilter)
+        val btnLight = findViewById<Button>(R.id.btnLightFilter)
+
+        // Réinitialiser les couleurs
+        listOf(btnShutter, btnGarage, btnLight).forEach {
+            it.setTextColor(Color.WHITE)
+            it.setBackgroundColor(Color.parseColor("#01053d"))
+        }
+
+        // Appliquer les styles sur le bouton sélectionné
+        (view as Button).apply {
+            setTextColor(Color.parseColor("#01053d"))
+            setBackgroundColor(Color.WHITE)
+        }
+
+        // Filtrer les appareils
+        filterDevicesByType(type)
+    }
+
+    // Démarrer la mise à jour périodique des appareils
+    private fun startDeviceUpdates() {
+        // Appeler loadDevices() périodiquement
+        handler.postDelayed(object : Runnable {
+            override fun run() {
+                loadDevices()
+                handler.postDelayed(this, updateInterval)  // Re-planifier le prochain appel
+            }
+        }, updateInterval)
+    }
 }

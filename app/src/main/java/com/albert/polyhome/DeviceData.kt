@@ -14,8 +14,3 @@ data class DeviceData(
 data class DeviceList(
     val devices: ArrayList<DeviceData>?
 )
-enum class DeviceCategories(val category: String){
-    SHUTTER("Shutter"),
-    GARAGE("Garage"),
-    LIGHT("Light")
-}
