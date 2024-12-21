@@ -1,119 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/ConstraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/mainTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="TextView"
-        android:textSize="34sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
+    <!-- Titre principal et bouton pour gestion des utilisateurs -->
     <LinearLayout
-        android:id="@+id/linearLayout4"
+        android:id="@+id/headerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Titre principal -->
+        <TextView
+            android:id="@+id/mainTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:text="Gestion PolyHome"
+            android:textAlignment="center"
+            android:textColor="#FFFFFF"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <!-- Bouton pour accéder à la gestion des utilisateurs -->
+        <Button
+            android:id="@+id/btnManageUsers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#01053d"
+            android:onClick="onClickUsers"
+            android:text="Utilisateurs"
+            android:textColor="@android:color/white"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <!-- Boutons de filtre -->
+    <LinearLayout
+        android:id="@+id/filterButtonsLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
         android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mainTitle">
+        app:layout_constraintTop_toBottomOf="@id/headerLayout"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <Button
             android:id="@+id/btnShutterFilter"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:backgroundTint="#01053d"
             android:onClick="onClickShutterFilter"
             android:text="Shutter"
-            android:textColor="@color/white" />
+            android:textColor="@android:color/white" />
 
         <Button
             android:id="@+id/btnGarageFilter"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:backgroundTint="#01053d"
             android:onClick="onClickGarageFilter"
             android:text="Garage"
-            android:textColor="@color/white" />
+            android:textColor="@android:color/white" />
 
         <Button
             android:id="@+id/btnLightFilter"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:backgroundTint="#01053d"
             android:onClick="onClickLightFilter"
             android:text="Light"
-            android:textColor="@color/white" />
+            android:textColor="@android:color/white" />
     </LinearLayout>
 
+    <!-- Liste des appareils -->
     <ListView
         android:id="@+id/listViewDevice"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="20dp"
+        android:layout_margin="10dp"
+        app:layout_constraintTop_toBottomOf="@id/filterButtonsLayout"
         app:layout_constraintBottom_toTopOf="@+id/buttonContainer"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout4" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Container for the 3 buttons -->
+    <!-- Boutons supplémentaires en bas -->
     <LinearLayout
         android:id="@+id/buttonContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="10dp"
         android:orientation="horizontal"
-        android:layout_marginTop="20dp"
-        app:layout_constraintTop_toBottomOf="@+id/listViewDevice"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:padding="10dp">
-
-        <Button
-            android:id="@+id/btnReback"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Reback"
-            android:backgroundTint="#01053d"
-            android:textColor="@color/white"
-            android:onClick="onClickReback" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <Button
             android:id="@+id/btnOpenAll"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="OPEN ALL"
             android:backgroundTint="#01053d"
-            android:textColor="@color/white"
-            android:onClick="onClickOpenAll" />
+            android:onClick="onClickOpenAll"
+            android:text="OPEN ALL"
+            android:textColor="@android:color/white" />
 
         <Button
             android:id="@+id/btnCloseAll"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="CLOSE ALL"
             android:backgroundTint="#01053d"
-            android:textColor="@color/white"
-            android:onClick="onClickCloseAll" />
+            android:onClick="onClickCloseAll"
+            android:text="CLOSE ALL"
+            android:textColor="@android:color/white" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

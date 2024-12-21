@@ -21,7 +21,10 @@
             android:name=".HouseActivity"
             android:exported="false" />
         <activity
-            android:name=".Test"
+            android:name=".DeviceActivity"
+            android:exported="false" />
+        <activity
+            android:name=".GrantAccessActivity"
             android:exported="false" />
         <activity
             android:name=".LoginActivity"

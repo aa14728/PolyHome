@@ -1,7 +1,5 @@
 package com.albert.polyhome
 
-import java.util.Locale.Category
-
 data class DeviceData(
     val id: String,
     val type: String,

@@ -21,7 +21,6 @@ class RegisterActivity : AppCompatActivity() {
 
     public fun register(view: View){
         val txtValueRegisterName = findViewById<TextView>(R.id.txtRegisterName)
-        val txtValueRegisterMail = findViewById<TextView>(R.id.txtRegisterMail)
         val txtValueRegisterPassword = findViewById<TextView>(R.id.txtRegisterPassword)
 
         val rgstData = RegisterData(txtValueRegisterName.text.toString(), txtValueRegisterPassword.text.toString())

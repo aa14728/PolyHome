@@ -49,7 +49,7 @@ class LoginActivity : AppCompatActivity() {
             try {
                 if(responseCode == 200 && loginResponse != null){
                     Toast.makeText(this, "Connexion réussie" , Toast.LENGTH_SHORT).show();
-                    val intent = Intent(this, Test::class.java);
+                    val intent = Intent(this, HouseActivity::class.java);
                     intent.putExtra("logtoken", loginResponse.token);
                     startActivity(intent);
                     finish();

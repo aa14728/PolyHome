@@ -1,6 +1,7 @@
 package com.albert.polyhome
 
 import android.content.Context
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -48,10 +49,14 @@ class DeviceAdapter(
 
         // Cacher/afficher les boutons selon le type d'appareil
         if (device.type == "light") {
-            if(device.power == 0)
+            if(device.power == 0) {
                 txtStatut.text = "TURN OFF"
-            else if(device.power == 1)
+                txtStatut.setTextColor(Color.parseColor("#b20000"))
+            }
+            else if(device.power == 1) {
                 txtStatut.text = "TURN ON"
+                txtStatut.setTextColor(Color.parseColor("#008000"))
+            }
             // Si c'est une light, cacher les boutons OPEN, CLOSE, STOP et afficher TURN ON / TURN OFF
             btnOpen.visibility = View.GONE
             btnClose.visibility = View.GONE
@@ -63,9 +68,18 @@ class DeviceAdapter(
             btnTurnOn.setOnClickListener { onActionClick("TURN ON", device.id) }
             btnTurnOff.setOnClickListener { onActionClick("TURN OFF", device.id) }
         } else {
-            if (device.openingMode == 0) txtStatut.text = "OPEN"
-            else if (device.openingMode == 1) txtStatut.text = "CLOSE"
-            else txtStatut.text = "STOP"
+            if (device.openingMode == 0) {
+                txtStatut.text = "OPEN"
+                txtStatut.setTextColor(Color.parseColor("#008000"))
+            }
+            else if (device.openingMode == 1) {
+                txtStatut.text = "CLOSE"
+                txtStatut.setTextColor(Color.parseColor("#b20000"))
+            }
+            else {
+                txtStatut.text = "STOP"
+                txtStatut.setTextColor(Color.parseColor("#595959"))
+            }
 
             // Sinon, c'est un appareil de type Shutter ou Garage, on garde OPEN, CLOSE et STOP
             btnOpen.visibility = View.VISIBLE

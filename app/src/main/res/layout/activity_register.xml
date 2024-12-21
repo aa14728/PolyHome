@@ -56,19 +56,6 @@
             android:paddingBottom="10dp" />
 
         <EditText
-            android:id="@+id/txtRegisterMail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:ems="10"
-            android:hint="Adresse mail"
-            android:inputType="textEmailAddress"
-            android:paddingLeft="5dp"
-            android:paddingTop="10dp"
-            android:paddingRight="5dp"
-            android:paddingBottom="10dp" />
-
-        <EditText
             android:id="@+id/txtRegisterPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
