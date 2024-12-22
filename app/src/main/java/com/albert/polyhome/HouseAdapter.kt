@@ -15,22 +15,18 @@ class HouseAdapter(
     private val inflater: LayoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater;
 
     override fun getCount(): Int {
-//        TODO("Not yet implemented")
         return houseSource.size;
     }
 
     override fun getItem(position: Int): Any {
-//        TODO("Not yet implemented")
         return houseSource[position];
     }
 
     override fun getItemId(position: Int): Long {
-//        TODO("Not yet implemented")
         return position.toLong();
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-//        TODO("Not yet implemented")
 
         val view = inflater.inflate(R.layout.house_list_item, parent, false);
 

@@ -18,17 +18,14 @@ class DeviceAdapter(
     private val inflater: LayoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater;
 
     override fun getCount(): Int {
-//        TODO("Not yet implemented")
         return deviceSource.size;
     }
 
     override fun getItem(position: Int): Any {
-//        TODO("Not yet implemented")
         return deviceSource[position];
     }
 
     override fun getItemId(position: Int): Long {
-//        TODO("Not yet implemented")
         return position.toLong();
     }
 
@@ -43,11 +40,9 @@ class DeviceAdapter(
         val btnTurnOn = view.findViewById<Button>(R.id.btnTurnOn)
         val btnTurnOff = view.findViewById<Button>(R.id.btnTurnOff)
 
-        // Récupérer le device actuel
         val device = getItem(position) as DeviceData
         txtDeviceID.text = device.id
 
-        // Cacher/afficher les boutons selon le type d'appareil
         if (device.type == "light") {
             if(device.power == 0) {
                 txtStatut.text = "TURN OFF"
@@ -57,14 +52,13 @@ class DeviceAdapter(
                 txtStatut.text = "TURN ON"
                 txtStatut.setTextColor(Color.parseColor("#008000"))
             }
-            // Si c'est une light, cacher les boutons OPEN, CLOSE, STOP et afficher TURN ON / TURN OFF
+
             btnOpen.visibility = View.GONE
             btnClose.visibility = View.GONE
             btnStop.visibility = View.GONE
             btnTurnOn.visibility = View.VISIBLE
             btnTurnOff.visibility = View.VISIBLE
 
-            // Ajouter les listeners pour les boutons de lumière
             btnTurnOn.setOnClickListener { onActionClick("TURN ON", device.id) }
             btnTurnOff.setOnClickListener { onActionClick("TURN OFF", device.id) }
         } else {
@@ -81,14 +75,12 @@ class DeviceAdapter(
                 txtStatut.setTextColor(Color.parseColor("#595959"))
             }
 
-            // Sinon, c'est un appareil de type Shutter ou Garage, on garde OPEN, CLOSE et STOP
             btnOpen.visibility = View.VISIBLE
             btnClose.visibility = View.VISIBLE
             btnStop.visibility = View.VISIBLE
             btnTurnOn.visibility = View.GONE
             btnTurnOff.visibility = View.GONE
 
-            // Ajouter les listeners pour les autres appareils
             btnOpen.setOnClickListener { onActionClick("OPEN", device.id) }
             btnClose.setOnClickListener { onActionClick("CLOSE", device.id) }
             btnStop.setOnClickListener { onActionClick("STOP", device.id) }

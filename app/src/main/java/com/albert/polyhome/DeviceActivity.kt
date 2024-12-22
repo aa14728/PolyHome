@@ -16,22 +16,19 @@ import com.example.androidtp2.Api
 class DeviceActivity : AppCompatActivity() {
 
     private var devices: ArrayList<DeviceData> = ArrayList()
-    private var currentFilter: String = ""  // Variable pour garder le filtre actuel
-    private val handler = Handler(Looper.getMainLooper()) // Handler pour exécuter les actions périodiquement
-    private val updateInterval = 30000L // Intervalle de 30 secondes pour récupérer les appareils
+    private var currentFilter: String = ""
+    private val handler = Handler(Looper.getMainLooper())
+    private val updateInterval = 30000L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_device)
 
-        // Charger les appareils au démarrage
         loadDevices()
 
-        // Démarrer la mise à jour périodique
         startDeviceUpdates()
     }
 
-    // Charger les appareils via l'API
     private fun loadDevices() {
         try {
             val tokenValue = intent.getStringExtra("token") ?: ""
@@ -56,7 +53,6 @@ class DeviceActivity : AppCompatActivity() {
         }
     }
 
-    // Gestion de la réponse pour le chargement des appareils
     private fun deviceSuccess(responseCode: Int, loadedDevices: DeviceList?) {
         runOnUiThread {
             when (responseCode) {
@@ -64,8 +60,7 @@ class DeviceActivity : AppCompatActivity() {
                     if (loadedDevices != null) {
                         devices.clear()
                         devices.addAll(loadedDevices.devices!!)
-                        // Appliquer le filtre après avoir chargé les appareils
-                        filterDevicesByType(currentFilter)  // Appliquer le filtre actuel
+                        filterDevicesByType(currentFilter)
                     }
                 }
                 403 -> Toast.makeText(this, "Accès interdit.", Toast.LENGTH_SHORT).show()
@@ -75,7 +70,7 @@ class DeviceActivity : AppCompatActivity() {
         }
     }
 
-    public fun sendCommandToDevice(action: String, deviceId: String) {
+    private fun sendCommandToDevice(action: String, deviceId: String) {
         val tokenValue = intent.getStringExtra("token") ?: ""
         val houseId = intent.getStringExtra("selectedHouseId") ?: ""
 
@@ -89,16 +84,15 @@ class DeviceActivity : AppCompatActivity() {
         Api().post<CommandData>("https://polyhome.lesmoulinsdudev.com/api/houses/$houseId/devices/$deviceId/command", commandData, ::sendCommandToDeviceSuccess, tokenValue)
     }
 
-    // Actualiser les appareils après l'envoi de la commande
-    public fun sendCommandToDeviceSuccess(responseCode: Int?) {
+
+    private fun sendCommandToDeviceSuccess(responseCode: Int?) {
         runOnUiThread {
             android.util.Log.d("DEBUG", "Response Code: $responseCode")
 
             when (responseCode) {
                 200 -> {
                     Toast.makeText(this, "Commande exécutée avec succès pour l'appareil", Toast.LENGTH_SHORT).show()
-                    // Rafraîchir la liste des appareils après une commande
-                    loadDevices()  // Recharger les appareils et appliquer immédiatement le filtre
+                    loadDevices()
                 }
                 400 -> Toast.makeText(this, "Erreur 400 : Requête invalide. Vérifiez les données envoyées.", Toast.LENGTH_SHORT).show()
                 403 -> Toast.makeText(this, "Accès interdit. Vérifiez votre token.", Toast.LENGTH_SHORT).show()
@@ -109,7 +103,6 @@ class DeviceActivity : AppCompatActivity() {
     }
 
     public fun onClickUsers(view: View){
-
         val tokenValue = intent.getStringExtra("token") ?: ""
         val houseId = intent.getStringExtra("selectedHouseId") ?: ""
 
@@ -161,7 +154,6 @@ class DeviceActivity : AppCompatActivity() {
     }
 
 
-    // Initialiser la liste des appareils
     private fun initDevicesListView(lstDevices: ArrayList<DeviceData>) {
         val listView = findViewById<ListView>(R.id.listViewDevice)
         listView.adapter = DeviceAdapter(this, lstDevices) { action, deviceId ->
@@ -169,15 +161,12 @@ class DeviceActivity : AppCompatActivity() {
         }
     }
 
-    // Méthode pour filtrer les appareils par type
     private fun filterDevicesByType(type: String) {
-        // Conserver le filtre actuel pour pouvoir le réappliquer après mise à jour
         currentFilter = type
         val filteredDevices = devices.filter { it.id.startsWith(type) }
         initDevicesListView(ArrayList(filteredDevices))
     }
 
-    // Gestion des filtres
     fun onClickShutterFilter(view: View) = updateFilterUI(view, "S")
     fun onClickGarageFilter(view: View) = updateFilterUI(view, "G")
     fun onClickLightFilter(view: View) = updateFilterUI(view, "L")
@@ -187,29 +176,24 @@ class DeviceActivity : AppCompatActivity() {
         val btnGarage = findViewById<Button>(R.id.btnGarageFilter)
         val btnLight = findViewById<Button>(R.id.btnLightFilter)
 
-        // Réinitialiser les couleurs
         listOf(btnShutter, btnGarage, btnLight).forEach {
             it.setTextColor(Color.WHITE)
             it.setBackgroundColor(Color.parseColor("#01053d"))
         }
 
-        // Appliquer les styles sur le bouton sélectionné
         (view as Button).apply {
             setTextColor(Color.parseColor("#01053d"))
             setBackgroundColor(Color.WHITE)
         }
 
-        // Filtrer les appareils
         filterDevicesByType(type)
     }
 
-    // Démarrer la mise à jour périodique des appareils
     private fun startDeviceUpdates() {
-        // Appeler loadDevices() périodiquement
         handler.postDelayed(object : Runnable {
             override fun run() {
                 loadDevices()
-                handler.postDelayed(this, updateInterval)  // Re-planifier le prochain appel
+                handler.postDelayed(this, updateInterval)
             }
         }, updateInterval)
     }

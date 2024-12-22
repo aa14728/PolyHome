@@ -7,16 +7,18 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.Button
 import android.widget.TextView
+import java.util.Locale
 
 class GrantAccessAdapter(
     private val context: Context,
     private var userSource: ArrayList<UserData>,
-    private val onGrant: (String) -> Unit,
-    private val onUnGrant: (String) -> Unit
+    private val onGrant: (String) -> Unit
 ) : BaseAdapter() {
 
-    override fun getCount(): Int = userSource.size
-    override fun getItem(position: Int): Any = userSource[position]
+    private var filteredUserList: ArrayList<UserData> = ArrayList(userSource)
+
+    override fun getCount(): Int = filteredUserList.size
+    override fun getItem(position: Int): Any = filteredUserList[position]
     override fun getItemId(position: Int): Long = position.toLong()
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
@@ -28,7 +30,6 @@ class GrantAccessAdapter(
 
         txtUserLogin.text = user.login
 
-        // Gestion des clics sur GRANT
         btnGrantUser.setOnClickListener {
             onGrant(user.login)
         }
@@ -36,9 +37,19 @@ class GrantAccessAdapter(
         return view
     }
 
-    // Méthode pour filtrer la liste en fonction du texte recherché
     fun filter(query: String) {
-        userSource = userSource.filter { it.login.contains(query, true) } as ArrayList<UserData>
+        val normalizedQuery = query.trim().lowercase(Locale.ROOT)
+        filteredUserList = if (normalizedQuery.isEmpty()) {
+            ArrayList(userSource)
+        } else {
+            ArrayList(userSource.filter {
+                it.login.trim().lowercase(Locale.ROOT).contains(normalizedQuery)
+            }.sortedWith(compareBy {
+                if (it.login.trim().lowercase(Locale.ROOT).startsWith(normalizedQuery)) 0 else 1
+            }))
+        }
         notifyDataSetChanged()
     }
+
 }
+

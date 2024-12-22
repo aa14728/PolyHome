@@ -34,7 +34,7 @@
             android:id="@+id/textView3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Inscription"
+            android:text="Registration"
             android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="34sp"
@@ -48,7 +48,7 @@
             android:layout_marginBottom="10dp"
             android:background="@color/white"
             android:ems="10"
-            android:hint="Nom"
+            android:hint="Name"
             android:inputType="text"
             android:paddingLeft="5dp"
             android:paddingTop="10dp"
@@ -63,7 +63,7 @@
             android:layout_marginBottom="10dp"
             android:background="@color/white"
             android:ems="10"
-            android:hint="Mot de passe"
+            android:hint="Password"
             android:inputType="textPassword"
             android:paddingLeft="5dp"
             android:paddingTop="10dp"
@@ -75,7 +75,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="register"
-            android:text="Enregistrer" />
+            android:text="Register" />
 
         <TextView
             android:id="@+id/textView4"
@@ -83,7 +83,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
             android:layout_marginBottom="10dp"
-            android:text="Déjà un compte ?"
+            android:text="Already have an account ?"
             android:textAlignment="center"
             android:textColor="@color/white" />
 
@@ -92,7 +92,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="goToLogin"
-            android:text="Retour à la page de connexion" />
+            android:text="Back to login page" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

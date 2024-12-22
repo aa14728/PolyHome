@@ -24,7 +24,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="3"
-            android:text="Gestion PolyHome"
+            android:text="Device PolyHome"
             android:textAlignment="center"
             android:textColor="#FFFFFF"
             android:textSize="24sp"
@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:backgroundTint="#01053d"
             android:onClick="onClickUsers"
-            android:text="Utilisateurs"
+            android:text="Users"
             android:textColor="@android:color/white"
             android:textSize="14sp" />
     </LinearLayout>

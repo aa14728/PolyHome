@@ -15,18 +15,13 @@ class HouseActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_houses)
 
-        //deviceAdapter = DeviceAdapter(this, devices);
-
         loadHouses()
         runOnUiThread{
             initHousesListView(houses)
         }
-//        housesAdapter = ArrayAdapter<HouseData>(this, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, houses)
-        //initDevicesListView()
-//        initializeSpinners()
     }
 
-    public fun loadHouses() {
+    private fun loadHouses() {
         try {
             val tokenValue = intent.getStringExtra("logtoken");
             Api().get<List<HouseData>>(
@@ -44,21 +39,16 @@ class HouseActivity : AppCompatActivity() {
         if (responseCode == 200 && loadedHouses != null) {
             for(house in loadedHouses)
                 houses.add(house)
-
-//            runOnUiThread {
-//                txtTitle.text = "PolyHome Chalet";
-//            }
         }
     }
 
-    public fun performActionOnDevice(house: HouseData){
+    private fun performActionOnDevice(house: HouseData){
         val dataValue = intent.getStringExtra("logtoken");
         val intent = Intent(this, DeviceActivity::class.java)
-        // Ajouter l'ID de la maison comme extra
+
         intent.putExtra("selectedHouseId", house.houseId.toString());
         intent.putExtra("token", dataValue)
 
-        // Lancer l'activité
         startActivity(intent)
     }
 
